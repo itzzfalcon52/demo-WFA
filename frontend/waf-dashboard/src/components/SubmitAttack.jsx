@@ -4,12 +4,13 @@ import axios from "axios";
 export default function SubmitAttack({ onSuccess }) {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState("");
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async () => {
     if (!input) return;
 
     try {
-      const res = await axios.post("http://localhost:8001/alerts", {
+      const res = await axios.post(`${API_URL}/alerts`, {
         text: input,
       });
       setMessage(res.data.flagged ? "🚨 Malicious! Flagged." : "✅ Safe.");
@@ -17,6 +18,7 @@ export default function SubmitAttack({ onSuccess }) {
       if (res.data.flagged && onSuccess) onSuccess(res.data.alert);
     } catch (err) {
       setMessage("Error submitting input");
+      console.error(err);
     }
   };
 

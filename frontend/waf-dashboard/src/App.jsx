@@ -12,17 +12,23 @@ function App() {
   const [ingestion, setIngestion] = useState({});
   const [model, setModel] = useState({});
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
-      setAlerts((await axios.get("http://localhost:8001/alerts")).data);
-      setMetrics((await axios.get("http://localhost:8001/metrics")).data);
-      setIngestion((await axios.get("http://localhost:8001/ingestion")).data);
-      setModel((await axios.get("http://localhost:8001/model")).data);
+      try {
+        setAlerts((await axios.get(`${API_URL}/alerts`)).data);
+        setMetrics((await axios.get(`${API_URL}/metrics`)).data);
+        setIngestion((await axios.get(`${API_URL}/ingestion`)).data);
+        setModel((await axios.get(`${API_URL}/model`)).data);
+      } catch (err) {
+        console.error("API error:", err);
+      }
     };
     fetchData();
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [API_URL]);
 
   const handleNewAlert = (alert) => {
     setAlerts((prev) => [alert, ...prev]);
