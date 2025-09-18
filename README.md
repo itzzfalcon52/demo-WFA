@@ -1,5 +1,7 @@
 # 🚀 Transformer-based Web Application Firewall (WAF) – Demo Project
 
+[🌐 Live Demo](https://demo-wfa.vercel.app/)
+
 ## 📌 Project Overview
 
 Traditional Web Application Firewalls (WAFs) rely on static, rule-based detection mechanisms. These struggle against **zero-day exploits** and **never-seen-before attacks**.
