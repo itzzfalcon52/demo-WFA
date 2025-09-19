@@ -31,12 +31,11 @@ export default function SubmitAttack({ onSuccess }) {
     setMessage("");
     try {
       const res = await axios.post(`${API_URL}/alerts`, { text });
+      console.log("POST /alerts response:", res.data);
       const alertObj = buildAlertFromResponse(res.data, text);
 
       setMessage(
-        res.data && res.data.flagged
-          ? "🚨 Malicious! Flagged."
-          : "✅ Submitted."
+        res.data && res.data.flagged ? "🚨 Malicious! Flagged." : "✅ Safe."
       );
       setInput("");
 
