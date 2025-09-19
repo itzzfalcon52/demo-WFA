@@ -28,7 +28,9 @@ MALICIOUS_PATTERNS = [
     r"data\s*:\s*(text|application)\/javascript",      # data: js payload
     r"\.\./",                                          # path traversal
     r"<[^>]*(alert\s*\(|on\w+\s*=)[^>]*>",             # tags with alert() or on*
+    r"alert\s*\("                                      # catch alert() anywhere
 ]
+
 
 # compile once
 COMPILED_PATTERNS = [(p, re.compile(p, re.IGNORECASE | re.DOTALL)) for p in MALICIOUS_PATTERNS]
