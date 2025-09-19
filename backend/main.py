@@ -18,26 +18,16 @@ ALERTS = [
     {"level": "HIGH", "text": "XSS Attempt - <script>alert(1)</script>", "ts": "15s ago"},
 ]
 
-# Improved malicious patterns
 MALICIOUS_PATTERNS = [
-    # crude SQL injection: " or " / " and " followed by =
-    r"(\bor\b|\band\b)\s+[^=]*=.*",
-
-    # <script> ... </script>
-    r"<script.*?>.*?</script>",
-
-    # event handlers: onerror=, onclick=, onload=, etc.  (matches single/double/unquoted)
-    r"on\w+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)",
-
-    # javascript: URIs (e.g. href="javascript:alert(1)")
-    r"javascript\s*:\s*[^\s>]+",
-
-    # data: URIs carrying javascript
-    r"data\s*:\s*text\/html|data\s*:\s*text\/javascript|data\s*:\s*application\/javascript",
-
-    # path traversal
-    r"\.\./",
+    r"(\bor\b|\band\b)\s+[^=]*=.*",                    # crude SQL injection
+    r"<script.*?>.*?</script>",                        # <script> tags
+    r"on\w+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)",     # event handlers
+    r"javascript\s*:\s*[^\s>]+",                       # javascript: URIs
+    r"data\s*:\s*(text|application)\/javascript",      # data: js payload
+    r"\.\./",                                          # path traversal
+    r"<[^>]*(alert\s*\(|on\w+\s*=)[^>]*>",             # tags with alert() or on*
 ]
+
 
 # compile once for speed
 COMPILED_PATTERNS = [re.compile(p, re.IGNORECASE | re.DOTALL) for p in MALICIOUS_PATTERNS]
