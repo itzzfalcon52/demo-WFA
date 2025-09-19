@@ -130,7 +130,7 @@ Access at: [http://localhost:5173](http://localhost:5173)
 
 ## 🤝 Contributors
 
-- [Your Team Name]
+- built with ❤️ bt team HELIOS
 
 ---
 
