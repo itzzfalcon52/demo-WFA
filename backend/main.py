@@ -13,22 +13,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory alert list
 ALERTS = [
     {"level": "CRITICAL", "text": "SQL Injection - /products?id=1 OR 1=1", "ts": "just now"},
     {"level": "HIGH", "text": "XSS Attempt - <script>alert(1)</script>", "ts": "15s ago"},
 ]
 
-# Simple malicious patterns
+# Improved malicious patterns
 MALICIOUS_PATTERNS = [
-    r"(\bor\b|\band\b).*=.*",  # SQL injection
-    r"<script>.*</script>",    # XSS
-    r"\.\./",                  # Path traversal
+    # crude SQL injection: " or " / " and " followed by =
+    r"(\bor\b|\band\b)\s+[^=]*=.*",
+
+    # <script> ... </script>
+    r"<script.*?>.*?</script>",
+
+    # event handlers: onerror=, onclick=, onload=, etc.  (matches single/double/unquoted)
+    r"on\w+\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)",
+
+    # javascript: URIs (e.g. href="javascript:alert(1)")
+    r"javascript\s*:\s*[^\s>]+",
+
+    # data: URIs carrying javascript
+    r"data\s*:\s*text\/html|data\s*:\s*text\/javascript|data\s*:\s*application\/javascript",
+
+    # path traversal
+    r"\.\./",
 ]
 
+# compile once for speed
+COMPILED_PATTERNS = [re.compile(p, re.IGNORECASE | re.DOTALL) for p in MALICIOUS_PATTERNS]
+
 def check_malicious(text: str):
-    for pattern in MALICIOUS_PATTERNS:
-        if re.search(pattern, text, re.IGNORECASE):
+    if not isinstance(text, str):
+        return False
+    for pattern in COMPILED_PATTERNS:
+        if pattern.search(text):
             return True
     return False
 
@@ -48,7 +66,7 @@ def submit_alert(payload: dict = Body(...)):
     alert = {"level": level, "text": text, "ts": "just now"}
     
     if is_malicious:
-        ALERTS.insert(0, alert)  # Add to live feed
+        ALERTS.insert(0, alert)
     return {"flagged": is_malicious, "alert": alert}
 
 # ----------------- METRICS -----------------
@@ -57,8 +75,8 @@ def get_metrics():
     return {
         "requests": random.randint(500, 1500),
         "anomalies": random.randint(10, 50),
-        "blocked": random.randint(0, 10),   # Example
-        "uptime": f"{random.randint(1, 24)}h"  # Example
+        "blocked": random.randint(0, 10),
+        "uptime": f"{random.randint(1, 24)}h"
     }
 
 # ----------------- INGESTION -----------------

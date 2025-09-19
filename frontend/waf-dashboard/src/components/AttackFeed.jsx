@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 export default function AttackFeed({ alerts }) {
   return (
     <div className="rounded-2xl p-6 bg-gradient-to-b from-gray-800 to-gray-900 shadow-lg max-h-[80vh] overflow-y-auto">
@@ -6,7 +8,7 @@ export default function AttackFeed({ alerts }) {
         Live Attack Feed
       </h2>
       <ul className="space-y-3">
-        {alerts.map((a, i) => (
+        {alerts?.map((a, i) => (
           <li
             key={i}
             className="flex items-center justify-between p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-all"
@@ -22,7 +24,15 @@ export default function AttackFeed({ alerts }) {
             >
               {a.level}
             </span>
-            <span className="flex-1 ml-3 text-white">{a.text}</span>
+
+            {/* sanitize text before rendering */}
+            <span
+              className="flex-1 ml-3 text-white break-words"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(a.text),
+              }}
+            />
+
             <span className="text-gray-300 text-xs ml-3">{a.ts}</span>
           </li>
         ))}

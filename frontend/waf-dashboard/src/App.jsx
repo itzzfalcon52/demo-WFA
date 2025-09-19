@@ -17,14 +17,21 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setAlerts((await axios.get(`${API_URL}/alerts`)).data);
-        setMetrics((await axios.get(`${API_URL}/metrics`)).data);
-        setIngestion((await axios.get(`${API_URL}/ingestion`)).data);
-        setModel((await axios.get(`${API_URL}/model`)).data);
+        const alertsRes = await axios.get(`${API_URL}/alerts`);
+        const metricsRes = await axios.get(`${API_URL}/metrics`);
+        const ingestionRes = await axios.get(`${API_URL}/ingestion`);
+        const modelRes = await axios.get(`${API_URL}/model`);
+
+        // ✅ Normalize alerts (always an array)
+        setAlerts(Array.isArray(alertsRes.data) ? alertsRes.data : []);
+        setMetrics(metricsRes.data || {});
+        setIngestion(ingestionRes.data || {});
+        setModel(modelRes.data || {});
       } catch (err) {
         console.error("API error:", err);
       }
     };
+
     fetchData();
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
