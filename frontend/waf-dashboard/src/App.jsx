@@ -13,7 +13,7 @@ function App() {
   const [model, setModel] = useState({});
 
   const API_URL = import.meta.env.VITE_API_URL;
-  console.log(API_URL);
+  //console.log(API_URL);
 
   useEffect(() => {
     const fetchData = async () => {
