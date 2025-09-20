@@ -5,6 +5,7 @@ import MetricsCard from "./components/MetricsCard";
 import IngestionStatus from "./components/IngestionStatus";
 import ModelUpdates from "./components/ModelUpdates";
 import SubmitAttack from "./components/SubmitAttack";
+import AccuracyCard from "./components/AccuracyCard";
 
 function App() {
   const [alerts, setAlerts] = useState([]);
@@ -22,7 +23,6 @@ function App() {
         const ingestionRes = await axios.get(`${API_URL}/ingestion`);
         const modelRes = await axios.get(`${API_URL}/model`);
 
-        // ✅ Normalize alerts (always an array)
         setAlerts(Array.isArray(alertsRes.data) ? alertsRes.data : []);
         setMetrics(metricsRes.data || {});
         setIngestion(ingestionRes.data || {});
@@ -68,13 +68,9 @@ function App() {
             </svg>
             <p className="text-sm text-gray-300">
               <strong className="text-white">Note:</strong> The Metrics,
-              Ingestion and Model panels show{" "}
-              <span className="font-medium text-gray-100">
-                simulated demo data
-              </span>{" "}
-              for development and testing. These are representative values —
-              they will be replaced with live production data in the final
-              product.
+              Ingestion, Model, and Accuracy panels show{" "}
+              <span className="font-medium text-gray-100">demo data</span> for
+              development. They will be replaced with live production data.
             </p>
           </div>
         </div>
@@ -87,7 +83,7 @@ function App() {
           <AttackFeed alerts={alerts} />
         </div>
 
-        {/* Right column: Metrics, Ingestion, Model */}
+        {/* Right column: Metrics, Ingestion, Model, Accuracy */}
         <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Metrics */}
           <MetricsCard metrics={metrics} />
@@ -95,9 +91,14 @@ function App() {
           {/* Ingestion */}
           <IngestionStatus ingestion={ingestion} />
 
-          {/* Model updates spans full width */}
+          {/* Model updates */}
           <div className="md:col-span-2">
             <ModelUpdates model={model} />
+          </div>
+
+          {/* Accuracy Card */}
+          <div className="md:col-span-2">
+            <AccuracyCard ml_metrics={model.ml_metrics || {}} />
           </div>
         </div>
       </div>

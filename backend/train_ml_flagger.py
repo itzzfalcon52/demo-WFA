@@ -1,10 +1,10 @@
-# train_ml_flagger.py
 import pandas as pd
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 # ----------------- Load Dataset -----------------
 df = pd.read_csv("urldata.csv")  # columns: index,url,label,result
@@ -34,5 +34,26 @@ clf = make_pipeline(
 # ----------------- Train Model -----------------
 clf.fit(X_train, y_train)
 
+# ----------------- Evaluate -----------------
+y_pred = clf.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred, pos_label="malicious")
+recall = recall_score(y_test, y_pred, pos_label="malicious")
+f1 = f1_score(y_test, y_pred, pos_label="malicious")
+
+print(f"Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1:.4f}")
+
 # ----------------- Save Model -----------------
 joblib.dump(clf, "ml_model.joblib")
+
+# ----------------- Save Metrics -----------------
+metrics_df = pd.DataFrame([{
+    "accuracy": accuracy,
+    "precision": precision,
+    "recall": recall,
+    "f1_score": f1
+}])
+metrics_df.to_csv("ml_metrics.csv", index=False)
+
+print("✅ ML model and metrics saved successfully")
