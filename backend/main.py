@@ -1,9 +1,9 @@
 """
-FastAPI WAF: Regex + Transformer (TinyBERT) Detection
-
+FastAPI WAF: Regex + Optional Transformer (TinyBERT) Detection
+Render-ready: binds to $PORT and allows CORS
 """
 
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List, Tuple
@@ -43,11 +43,11 @@ MALICIOUS_PATTERNS = [
 ]
 COMPILED_PATTERNS = [(p, re.compile(p, re.IGNORECASE | re.DOTALL)) for p in MALICIOUS_PATTERNS]
 
-# ----------------- App & Data Structures -----------------
+# ----------------- App & Data -----------------
 app = FastAPI(title="Regex+Transformer WAF", version="0.1")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all origins for frontend
+    allow_origins=["*"],  # allow frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,7 +60,7 @@ class AlertIn(BaseModel):
     source: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 
-# ----------------- Transformer Pipeline -----------------
+# ----------------- Transformer -----------------
 clf = None
 
 # ----------------- Utility Functions -----------------
@@ -189,8 +189,13 @@ def get_ingestion():
 def get_model():
     return {"version": MODEL_ID, "transformer_loaded": TRANSFORMER_AVAILABLE and clf is not None}
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 # ----------------- Run App -----------------
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))  # use host-assigned port if available
+    port = int(os.environ.get("PORT", 8000))  # required for Render
     uvicorn.run("fastapi_transformer_waf:app", host="0.0.0.0", port=port, reload=True)
