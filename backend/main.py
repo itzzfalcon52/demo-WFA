@@ -1,10 +1,6 @@
 """
 FastAPI WAF: Regex + Transformer (TinyBERT) Detection
-Save as: fastapi_transformer_waf.py
-Install:
-    pip install fastapi uvicorn transformers torch python-multipart
-Run:
-    uvicorn fastapi_transformer_waf:app --host 0.0.0.0 --port 8000
+
 """
 
 from fastapi import FastAPI, HTTPException, Body
@@ -51,7 +47,7 @@ COMPILED_PATTERNS = [(p, re.compile(p, re.IGNORECASE | re.DOTALL)) for p in MALI
 app = FastAPI(title="Regex+Transformer WAF", version="0.1")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # allow all origins for frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -196,4 +192,5 @@ def get_model():
 # ----------------- Run App -----------------
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("fastapi_transformer_waf:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))  # use host-assigned port if available
+    uvicorn.run("fastapi_transformer_waf:app", host="0.0.0.0", port=port, reload=True)
