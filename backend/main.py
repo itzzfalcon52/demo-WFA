@@ -85,8 +85,9 @@ def check_ml(url: str):
     if url_norm in BLACKLIST:
         return True, 1.0
 
-    prob = clf.predict_proba([url_norm])[0][1]  # probability malicious
-    return prob >= THRESHOLD, prob
+    prob = float(clf.predict_proba([url_norm])[0][1])  # cast to Python float
+    flagged = bool(prob >= THRESHOLD)                  # cast to Python bool
+    return flagged, prob
 
 def flag_url(url: str):
     """
@@ -97,11 +98,20 @@ def flag_url(url: str):
     if "?" in url or "=" in url:
         # regex domain
         is_regex, matched_pattern = check_regex(url)
-        return {"flagged": is_regex, "source": "regex", "matched_pattern": matched_pattern}
+        return {
+            "flagged": bool(is_regex),
+            "source": "regex",
+            "matched_pattern": matched_pattern
+        }
     else:
         # ML domain
         is_ml, prob = check_ml(url)
-        return {"flagged": is_ml, "source": "ml", "matched_pattern": None, "probability": prob}
+        return {
+            "flagged": is_ml,
+            "source": "ml",
+            "matched_pattern": None,
+            "probability": float(prob)
+        }
 
 # ----------------- Endpoints -----------------
 @app.post("/alerts")
