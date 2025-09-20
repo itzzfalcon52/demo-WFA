@@ -71,24 +71,24 @@ This repository contains a **demo version** of our system with:
 
 ---
 
-## 🔍 Demo vs Hackathon Project
+## Demo vs Final Product (Transformer-based WAF)
 
-| Category                   | Current Demo                                                             | Final Product (Transformer-based WAF)                                                                           | Impact / Notes                                                                                |
-| -------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --- |
-| Data Source                | Kaggle dataset urldata.csv (~450k URLs), whitelist & blacklist.          | Synthetic access logs for 3 provided web apps (benign traffic) + live requests.                                 | Dataset is dynamic and app-specific. Your ML model will learn patterns of real user requests. |
-| Detection Type             | Regex (for URLs with ? or =) + Logistic Regression (TF-IDF char n-gram). | Transformer-based anomaly detection on entire HTTP request (method, path, params, headers, payload, etc.).      | Captures sequential patterns, zero-day attacks, never-seen-before anomalies.                  |
-| Log Ingestion              | N/A – only URLs provided as test inputs.                                 | Batch ingestion (historical logs) + streaming ingestion (tail logs live).                                       | Real-time detection requires scalable ingestion pipeline.                                     |
-| Parsing & Normalization    | Only URL normalization (strip().lower().rstrip('/')).                    | Extract fields: method, path, parameters, headers, payload. Normalize dynamic values (IDs, timestamps, tokens). | Preprocessing transforms raw HTTP requests into tokens suitable for Transformer input.        |
-| Tokenization               | Character n-grams for URL only.                                          | Token sequences for full HTTP requests; may include positional encodings for path/parameters.                   | Required for Transformer input representation.                                                |
-| Model Architecture         | Logistic Regression + TF-IDF features.                                   | Open-source Transformer (e.g., BERT-like) fine-tuned on access logs.                                            | Can learn sequential patterns, dependencies, anomalies across requests.                       |
-| Training                   | One-time model training on Kaggle dataset.                               | Pre-finale training on synthetic benign logs + incremental updates on new traffic.                              | Ensures the model adapts to new apps and evolving traffic patterns.                           |
-| Inference & Live Detection | Local Python script + FastAPI endpoint.                                  | Integrated WAF with Apache/Nginx; real-time non-blocking inference.                                             | Must handle multiple requests simultaneously without latency.                                 |
-| Threshold / Flags          | Static threshold + whitelist/blacklist for ML probability.               | Anomaly score per request; optional thresholds for alerting/blocking.                                           | Transformer outputs anomaly scores; can be combined with policy engine.                       |
-| Alerts / Feedback          | Simple alert JSON (flagged, source, probability).                        | Real-time alerts with severity, matched fields, anomaly score; integrated dashboard.                            | Helps operators see live attacks.                                                             |
-| Metrics / Monitoring       | Requests, flagged counts, blocked counts.                                | Detailed metrics: request volume, anomaly distribution, model confidence, latency, ingestion rate.              | Essential for production-level WAF.                                                           |
-| Retraining / Updates       | Manual script rerun.                                                     | Continuous incremental fine-tuning on new benign traffic.                                                       | Transformer updates without retraining on entire dataset.                                     |
-| Security / Reliability     | Local test only.                                                         | Production-grade WAF with logging, authentication, rate limiting, fault tolerance.                              | Hackathon-ready solution must be demonstrable and robust.                                     |
-| Demonstration              | Test URLs sent via API, some phishing examples.                          | Live injection of malicious payloads on provided apps; WAF detects anomalies in real time.                      | Transformer detects new attack patterns not in initial dataset.                               |     |
+| Category     | Current Demo                         | Final Product (Transformer WAF)                             |
+| ------------ | ------------------------------------ | ----------------------------------------------------------- |
+| Data Source  | Kaggle URLs dataset + lists          | Synthetic app logs + live traffic                           |
+| Detection    | Regex + Logistic Regression (TF-IDF) | Transformer anomaly detection on full HTTP requests         |
+| Ingestion    | N/A                                  | Batch + streaming (real-time logs)                          |
+| Parsing      | URL normalization only               | Full request parsing & normalization                        |
+| Tokenization | URL char n-grams                     | Token sequences for requests (path, params, headers, etc.)  |
+| Model        | Logistic Regression                  | Transformer (BERT-like) fine-tuned on logs                  |
+| Training     | One-time on Kaggle                   | Incremental on new benign traffic                           |
+| Inference    | Script + FastAPI                     | Integrated WAF (Apache/Nginx, real-time inference)          |
+| Thresholds   | Static + whitelist/blacklist         | Anomaly scores + policy engine                              |
+| Alerts       | Simple JSON output                   | Real-time alerts + dashboard                                |
+| Metrics      | Requests + flagged counts            | Detailed metrics (latency, anomaly dist., confidence, etc.) |
+| Retraining   | Manual rerun                         | Continuous fine-tuning                                      |
+| Security     | Local only                           | Production-grade WAF (auth, rate-limit, fault tolerance)    |
+| Demo         | Test URLs via API                    | Live payload injection on apps (real-time detection)        |
 
 ---
 
