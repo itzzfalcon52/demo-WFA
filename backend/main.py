@@ -12,6 +12,8 @@ from urllib.parse import unquote_plus
 import logging
 import os
 import time
+from fastapi.responses import JSONResponse
+
 
 # ----------------- Transformer Setup -----------------
 TRANSFORMER_AVAILABLE = False
@@ -47,11 +49,13 @@ COMPILED_PATTERNS = [(p, re.compile(p, re.IGNORECASE | re.DOTALL)) for p in MALI
 app = FastAPI(title="Regex+Transformer WAF", version="0.1")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow frontend
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],  # Add this line
 )
+
 
 ALERTS: List[Dict[str, Any]] = []
 
@@ -159,30 +163,72 @@ async def submit_alert(payload: AlertIn):
         "checked_text": checked_text,
         "timings": {"start": t0, "end": t1, "inference_ms": int((t1-t0)*1000)}
     }
-
 @app.get("/metrics")
 def get_metrics():
-    total_requests = len(ALERTS)
-    blocked = sum(1 for a in ALERTS if a.level=="CRITICAL" or (a.ml and a.ml.get("flagged")))
-    ml_flagged = sum(1 for a in ALERTS if a.ml and a.ml.get("flagged"))
-    regex_flagged = sum(1 for a in ALERTS if a.level=="CRITICAL" and not (a.ml and a.ml.get("flagged")))
-    avg_ml_score = (sum(a.ml.get("score",0) for a in ALERTS if a.ml)/ml_flagged) if ml_flagged>0 else 0.0
-    return {
-        "requests_total": total_requests,
-        "alerts_blocked": blocked,
-        "ml_flagged": ml_flagged,
-        "regex_flagged": regex_flagged,
-        "ml_score_avg": round(avg_ml_score,3),
-        "uptime": "24h"
-    }
+    try:
+        total_requests = len(ALERTS)
+
+        blocked = 0
+        ml_flagged = 0
+        regex_flagged = 0
+        ml_scores = []
+
+        for a in ALERTS:
+            if not isinstance(a, dict):
+                continue  # skip malformed alerts
+            level = a.get("level", "")
+            ml = a.get("ml") or {}
+
+            flagged_ml = bool(ml.get("flagged", False))
+
+            if level == "CRITICAL" or flagged_ml:
+                blocked += 1
+            if flagged_ml:
+                ml_flagged += 1
+            if level == "CRITICAL" and not flagged_ml:
+                regex_flagged += 1
+            try:
+                ml_scores.append(float(ml.get("score", 0.0)))
+            except Exception:
+                continue
+
+        avg_ml_score = round(sum(ml_scores)/len(ml_scores), 3) if ml_scores else 0.0
+
+        return {
+            "requests_total": total_requests,
+            "alerts_blocked": blocked,
+            "ml_flagged": ml_flagged,
+            "regex_flagged": regex_flagged,
+            "ml_score_avg": avg_ml_score,
+            "uptime": "24h"
+        }
+
+    except Exception as e:
+        logger.exception("Error generating metrics")
+        return JSONResponse(
+            status_code=500,
+            content={"error": "Metrics calculation failed", "details": str(e)}
+        )
 
 @app.get("/ingestion")
 def get_ingestion():
-    recent_alerts_count = len(ALERTS[-100:])
-    rate = recent_alerts_count / 5
+    # Safely get the last 100 alerts
+    recent_alerts = ALERTS[-100:] if ALERTS else []
+    recent_alerts_count = len(recent_alerts)
+
+    # Calculate a simple rate (alerts per 5 seconds window)
+    rate = recent_alerts_count / 5 if recent_alerts_count > 0 else 0.0
+
     return {
-        "batch": {"status": "processed", "logs": len(ALERTS), "last_run": "just now"},
-        "streaming": {"status": "active", "rate": f"{rate:.1f} alerts/sec"}
+        "batch": {
+            "status": "processed",
+            "logs": len(ALERTS),
+            "last_run": "just now"  # Could be extended with actual timestamps
+        },
+        "streaming": {
+            "status": "active" if recent_alerts_count > 0 else "idle",
+            "rate": f"{rate:.1f} alerts/sec"
+        }
     }
 
 @app.get("/model")
