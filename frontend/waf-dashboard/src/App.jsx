@@ -1,5 +1,9 @@
+// src/App.jsx
 import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import axios from "axios";
+
+// Dashboard components
 import AttackFeed from "./components/AttackFeed";
 import MetricsCard from "./components/MetricsCard";
 import IngestionStatus from "./components/IngestionStatus";
@@ -7,7 +11,10 @@ import ModelUpdates from "./components/ModelUpdates";
 import SubmitAttack from "./components/SubmitAttack";
 import AccuracyCard from "./components/AccuracyCard";
 
-function App() {
+// Test URLs page
+import TestPage from "../pages/TestPage";
+
+function Dashboard() {
   const [alerts, setAlerts] = useState([]);
   const [metrics, setMetrics] = useState({});
   const [ingestion, setIngestion] = useState({});
@@ -85,20 +92,13 @@ function App() {
 
         {/* Right column: Metrics, Ingestion, Model, Accuracy */}
         <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Metrics */}
           <MetricsCard metrics={metrics} />
-
-          {/* Ingestion */}
           <IngestionStatus ingestion={ingestion} />
-
-          {/* Model updates */}
           <div className="md:col-span-2">
             <ModelUpdates model={model} />
           </div>
-
-          {/* Accuracy Card */}
           <div className="md:col-span-2">
-            <AccuracyCard ml_metrics={model.ml_metrics || {}} />
+            <AccuracyCard ml_metrics={metrics.ml_metrics || {}} />
           </div>
         </div>
       </div>
@@ -106,4 +106,24 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      {/* Navigation */}
+      <nav className="p-4 bg-gray-900 text-white flex gap-4">
+        <Link to="/" className="hover:underline">
+          Dashboard
+        </Link>
+        <Link to="/test-page" className="hover:underline">
+          Test URLs
+        </Link>
+      </nav>
+
+      {/* Routes */}
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/test-page" element={<TestPage />} />
+      </Routes>
+    </Router>
+  );
+}
