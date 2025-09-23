@@ -3,5 +3,10 @@ uvicorn[standard]
 pandas
 scikit-learn
 joblib
-python-multipart
 imbalanced-learn
+python-multipart
+
+# Transformer stack
+torch
+transformers
+datasets
