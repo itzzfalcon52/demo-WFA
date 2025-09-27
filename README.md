@@ -195,7 +195,7 @@ To move from demo → production-grade WAF, we plan to add:
 
 ## 🤝 Contributors
 
-- built with ❤️ bt team HELIOS
+- built with ❤️ by team HELIOS
 
 ---
 

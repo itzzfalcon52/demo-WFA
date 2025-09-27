@@ -22,38 +22,59 @@ const AccuracyCard = ({ ml_metrics }) => {
   return (
     <div className="rounded-lg p-4 bg-gradient-to-r from-green-700 to-green-500 shadow-md text-white">
       <h3 className="text-lg font-bold mb-2">Transformer Metrics</h3>
+
       {hasMetrics ? (
-        <ul className="text-sm space-y-1">
-          <li>
-            <span className="font-medium">Accuracy:</span>{" "}
-            {metrics.accuracy.toFixed(3)}%
-          </li>
-          <li>
-            <span className="font-medium">Precision:</span>{" "}
-            {metrics.precision.toFixed(3)}%
-          </li>
-          <li>
-            <span className="font-medium">Recall:</span>{" "}
-            {metrics.recall.toFixed(3)}%
-          </li>
-          <li>
-            <span className="font-medium">F1 Score:</span>{" "}
-            {metrics.f1_score.toFixed(3)}%
-          </li>
-          <li>
-            <span className="font-medium">ROC-AUC:</span>{" "}
-            {isNaN(metrics.roc_auc) ? "N/A" : metrics.roc_auc.toFixed(3) + "%"}
-          </li>
-          <li>
-            <span className="font-medium">PR-AUC:</span>{" "}
-            {isNaN(metrics.pr_auc) ? "N/A" : metrics.pr_auc.toFixed(3) + "%"}
-          </li>
-          <li className="mt-2 font-semibold">Confusion Matrix</li>
-          <li className="text-xs">
-            TN: {metrics.tn ?? "?"}, FP: {metrics.fp ?? "?"}, FN:{" "}
-            {metrics.fn ?? "?"}, TP: {metrics.tp ?? "?"}
-          </li>
-        </ul>
+        <>
+          {/* Scalar Metrics */}
+          <ul className="text-sm space-y-1 mb-4">
+            <li>
+              <span className="font-medium">Accuracy:</span>{" "}
+              {metrics.accuracy.toFixed(3)}%
+            </li>
+            <li>
+              <span className="font-medium">Precision:</span>{" "}
+              {metrics.precision.toFixed(3)}%
+            </li>
+            <li>
+              <span className="font-medium">Recall:</span>{" "}
+              {metrics.recall.toFixed(3)}%
+            </li>
+            <li>
+              <span className="font-medium">F1 Score:</span>{" "}
+              {metrics.f1_score.toFixed(3)}%
+            </li>
+          </ul>
+
+          {/* Confusion Matrix Table */}
+          <div className=" bg-white rounded-lg shadow-md overflow-hidden">
+            <h4 className="text-gray-800 text-sm font-semibold p-2 bg-gray-200">
+              Confusion Matrix
+            </h4>
+            <table className="w-full text-center text-gray-800">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border p-2"></th>
+                  <th className="border p-2">Predicted: Benign</th>
+                  <th className="border p-2">Predicted: Malicious</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border p-2 font-semibold">Actual: Benign</td>
+                  <td className="border p-2">{metrics.tn ?? "-"}</td>
+                  <td className="border p-2">{metrics.fp ?? "-"}</td>
+                </tr>
+                <tr>
+                  <td className="border p-2 font-semibold">
+                    Actual: Malicious
+                  </td>
+                  <td className="border p-2">{metrics.fn ?? "-"}</td>
+                  <td className="border p-2">{metrics.tp ?? "-"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </>
       ) : (
         <p className="text-gray-200 text-sm">No metrics available</p>
       )}
