@@ -1,6 +1,6 @@
 # 🚀 Transformer-based Web Application Firewall (WAF) – Demo Project
 
-[🌐 Live Demo (Frontend)](https://demo-wfa.vercel.app/)
+[🌐 Live Demo (Frontend)](https://aigis-demo.vercel.app/)
 
 ---
 
