@@ -1,5 +1,6 @@
 // components/AccuracyCard.jsx
 import React from "react";
+import { TrendingUp, AlertTriangle, Target } from "lucide-react";
 
 const AccuracyCard = ({ ml_metrics }) => {
   const metrics = {
@@ -20,76 +21,95 @@ const AccuracyCard = ({ ml_metrics }) => {
   );
 
   return (
-    <div className="rounded-lg p-4 bg-gradient-to-r from-green-700 to-green-500 shadow-md text-white">
-      <h3 className="text-lg font-bold mb-2">Transformer Metrics</h3>
+    <div className="rounded-xl p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 shadow-xl">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 rounded-lg bg-emerald-500/20">
+          <Target className="w-5 h-5 text-emerald-400" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-white">
+            Model Performance
+          </h3>
+          <p className="text-xs text-slate-400">Transformer metrics</p>
+        </div>
+      </div>
 
       {hasMetrics ? (
         <>
-          {/* Scalar Metrics */}
-          <ul className="text-sm space-y-1 mb-4">
-            <li>
-              <span className="font-medium">Accuracy:</span>{" "}
-              {metrics.accuracy.toFixed(3)}%
-            </li>
-            <li>
-              <span className="font-medium">Precision:</span>{" "}
-              {metrics.precision.toFixed(3)}%
-            </li>
-            <li>
-              <span className="font-medium">Recall:</span>{" "}
-              {metrics.recall.toFixed(3)}%
-            </li>
-            <li>
-              <span className="font-medium">F1 Score:</span>{" "}
-              {metrics.f1_score.toFixed(3)}%
-            </li>
-          </ul>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+              <p className="text-xs text-slate-400 mb-1">Accuracy</p>
+              <p className="text-2xl font-bold text-emerald-300">
+                {metrics.accuracy.toFixed(1)}%
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30">
+              <p className="text-xs text-slate-400 mb-1">Precision</p>
+              <p className="text-2xl font-bold text-blue-300">
+                {metrics.precision.toFixed(1)}%
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/30">
+              <p className="text-xs text-slate-400 mb-1">Recall</p>
+              <p className="text-2xl font-bold text-purple-300">
+                {metrics.recall.toFixed(1)}%
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+              <p className="text-xs text-slate-400 mb-1">F1 Score</p>
+              <p className="text-2xl font-bold text-amber-300">
+                {metrics.f1_score.toFixed(1)}%
+              </p>
+            </div>
+          </div>
 
-          {/* Confusion Matrix Table */}
-          <div className=" bg-white rounded-lg shadow-md overflow-hidden">
-            <h4 className="text-gray-800 text-sm font-semibold p-2 bg-gray-200">
+          <div className="bg-slate-700/30 rounded-lg p-5 border border-slate-600">
+            <h4 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-slate-400" />
               Confusion Matrix
             </h4>
-            <table className="w-full text-center text-gray-800">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border p-2"></th>
-                  <th className="border p-2">Predicted: Benign</th>
-                  <th className="border p-2">Predicted: Malicious</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-2 font-semibold">Actual: Benign</td>
-                  <td className="border p-2">{metrics.tn ?? "-"}</td>
-                  <td className="border p-2">{metrics.fp ?? "-"}</td>
-                </tr>
-                <tr>
-                  <td className="border p-2 font-semibold">
-                    Actual: Malicious
-                  </td>
-                  <td className="border p-2">{metrics.fn ?? "-"}</td>
-                  <td className="border p-2">{metrics.tp ?? "-"}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-center">
+                <p className="text-xs text-slate-400 mb-2">True Negative</p>
+                <p className="text-3xl font-bold text-emerald-300">
+                  {metrics.tn || 0}
+                </p>
+              </div>
+              <div className="p-4 rounded-lg bg-orange-500/10 border border-orange-500/30 text-center">
+                <p className="text-xs text-slate-400 mb-2">False Positive</p>
+                <p className="text-3xl font-bold text-orange-300">
+                  {metrics.fp || 0}
+                </p>
+              </div>
+              <div className="p-4 rounded-lg bg-orange-500/10 border border-orange-500/30 text-center">
+                <p className="text-xs text-slate-400 mb-2">False Negative</p>
+                <p className="text-3xl font-bold text-orange-300">
+                  {metrics.fn || 0}
+                </p>
+              </div>
+              <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-center">
+                <p className="text-xs text-slate-400 mb-2">True Positive</p>
+                <p className="text-3xl font-bold text-emerald-300">
+                  {metrics.tp || 0}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+            <div className="flex gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-200">
+                <span className="font-semibold">Demo Note:</span> Metrics appear
+                unrealistically high due to Kaggle dataset. Production model
+                will show realistic performance on real application logs.
+              </p>
+            </div>
           </div>
         </>
       ) : (
-        <p className="text-gray-200 text-sm">No metrics available</p>
+        <p className="text-slate-400 text-center py-8">No metrics available</p>
       )}
-
-      {/* Disclaimer */}
-      <div className="mt-4 p-2 rounded bg-gray-900 text-gray-200 text-xs">
-        ⚠️ <span className="font-semibold">Note:</span> Metrics appear
-        unrealistically high because the demo uses a Kaggle URL dataset where
-        malicious vs benign links are easily separable. In the{" "}
-        <span className="font-semibold">final product</span>, the model will be
-        retrained on{" "}
-        <span className="font-semibold">real application logs</span>
-        (HTTP headers, query params, bodies). Performance will be lower but
-        reflect realistic, adversarial conditions.
-      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Send } from "lucide-react";
 
 export default function SubmitAttack({ onSuccess }) {
   const [input, setInput] = useState("");
@@ -50,29 +51,60 @@ export default function SubmitAttack({ onSuccess }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-gray-800 p-4 rounded-md shadow-md mb-6 flex flex-col sm:flex-row items-center gap-4"
-    >
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter URL or payload"
-        className="p-2 rounded-2xl w-full sm:w-1/2 text-white bg-gray-600"
-        disabled={loading}
-        aria-label="payload-input"
-      />
-      <button
-        type="submit"
-        disabled={loading}
-        className={`px-4 py-2 rounded-2xl text-white ${
-          loading ? "bg-gray-500" : "bg-red-600 hover:bg-red-700"
-        }`}
-      >
-        {loading ? "Submitting..." : "Submit"}
-      </button>
-      {message && <p className="text-sm mt-2 sm:mt-0">{message}</p>}
-    </form>
+    <div className="rounded-xl p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 shadow-xl">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-blue-500/20">
+          <Send className="w-5 h-5 text-blue-400" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-white">Test Input</h3>
+          <p className="text-xs text-slate-400">
+            Submit URLs or payloads for analysis
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Enter URL or payload to test..."
+            className="flex-1 px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            disabled={loading}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg flex items-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Testing...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                Submit
+              </>
+            )}
+          </button>
+        </div>
+
+        {message && (
+          <div
+            className={`p-3 rounded-lg ${
+              message.includes("Malicious")
+                ? "bg-red-500/10 border border-red-500/30 text-red-300"
+                : "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+            }`}
+          >
+            <p className="text-sm font-medium">{message}</p>
+          </div>
+        )}
+      </form>
+    </div>
   );
 }
