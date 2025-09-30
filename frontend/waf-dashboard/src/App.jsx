@@ -1,6 +1,12 @@
 // src/App.jsx
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import axios from "axios";
 
 // Dashboard components
