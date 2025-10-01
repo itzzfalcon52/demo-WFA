@@ -1,7 +1,7 @@
 // src/components/TestPage.jsx
 import { useState } from "react";
 import axios from "axios";
-import SAMPLE_URLS from "../data/sampleurls";
+import SAMPLE_URLS from "../../data/sampleurls";
 import {
   CheckCircle,
   XCircle,
