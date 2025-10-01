@@ -15,7 +15,7 @@ function Navigation() {
               <img
                 src="./aigis-logo.png"
                 alt="AIGIS Logo"
-                className="w-32 h-32 sm:w-12 md:w-16 sm:h-12 md:h-16"
+                className="w-12 h-12 sm:w-12 md:w-16 sm:h-12 md:h-16"
               />
             </div>
             <span className="text-lg sm:text-xl md:text-2xl font-bold text-white">
