@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { Shield, LayoutDashboard, TestTube } from "lucide-react";
+import { Shield, LayoutDashboard, TestTube, GitFork } from "lucide-react";
 
 function Navigation() {
   const location = useLocation();
@@ -13,9 +13,9 @@ function Navigation() {
           <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
             <div className="rounded-lg transition-all">
               <img
-                src="./aigis.png"
+                src="./aigis-logo.png"
                 alt="AIGIS Logo"
-                className="w-8 h-8 sm:w-12 md:w-16 sm:h-12 md:h-16"
+                className="w-32 h-32 sm:w-12 md:w-16 sm:h-12 md:h-16"
               />
             </div>
             <span className="text-lg sm:text-xl md:text-2xl font-bold text-white">
@@ -49,6 +49,17 @@ function Navigation() {
               <span className="hidden sm:inline">Test URLs</span>
             </Link>
           </div>
+
+          {/* GitHub Link */}
+          <a
+            href="https://github.com/itzzfalcon52/demo-WFA"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all text-sm sm:text-base"
+          >
+            <GitFork className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline font-medium">GitHub</span>
+          </a>
 
           {/* Status Indicator */}
           <div className="hidden md:flex px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30">
