@@ -64,8 +64,8 @@ export default function SubmitAttack({ onSuccess }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex gap-3">
+      <form onSubmit={handleSubmit} className="space-y-4 ">
+        <div className="flex gap-3 max-sm:flex-col">
           <input
             type="text"
             value={input}
@@ -77,7 +77,7 @@ export default function SubmitAttack({ onSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg flex items-center gap-2"
+            className="px-6 py-3 rounded-lg  bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
