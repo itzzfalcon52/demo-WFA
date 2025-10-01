@@ -11,10 +11,14 @@ function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 group-hover:from-blue-400 group-hover:to-blue-500 transition-all">
-              <Shield className="w-5 h-5 text-white" />
+            <div className=" rounded-lg  group-hover:from-blue-400 group-hover:to-blue-500 transition-all">
+              <img
+                src="./aigis.png"
+                alt="AIGIS Logo"
+                className="w-16 h-16 text-white"
+              />
             </div>
-            <span className="text-lg font-bold text-white">AIGIS</span>
+            <span className="text-2xl font-bold text-white">AIGIS</span>
           </Link>
 
           {/* Navigation Links */}
